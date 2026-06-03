@@ -77,6 +77,12 @@ jobs:
           bash play_downloader.sh ${{ env.GAME_ID }}
           java -jar APKEditor.jar m -i ${{ env.GAME_ID }} -o ${{ env.GAME_APK_NAME }}
 
+      - name: Extract localization.json
+        continue-on-error: true
+        run: |
+          pip install UnityPy
+          python extract_localization.py "${{ env.GAME_APK_NAME }}" localization.json
+
       - name: Prepare cloned APK file
         run: bash clone.sh
 
@@ -96,3 +102,4 @@ jobs:
             ${{ env.EMBED_APK }}
             ${{ env.PATCHED_APK }}
             ${{ env.EMBED_APK_CN }}
+            localization.json
