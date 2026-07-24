@@ -1,57 +1,30 @@
-name: Download and patch
+name: Download and patch(Skip version check)
 env:
-  # Global env vars that both jobs might use
   GAME_ID: "com.bandainamcoent.idolmaster_gakuen"
   USER_AGENT: "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"
-
-
+  PLAY_EMAIL: ${{ secrets.PLAY_EMAIL }}
+  AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
 on:
-  schedule:
-    - cron: 0 18 * * *
-      timezone: "Asia/Tokyo"
   workflow_dispatch:
-  push:
 
 permissions:
   contents: write
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    outputs:
-      continue: ${{ steps.ver_check.outputs.continue }}
-      apk_version: ${{ steps.ver_check.outputs.apk_version }}
-      game_file_base: ${{ steps.ver_check.outputs.game_file_base }}
-      game_apk_name: ${{ steps.ver_check.outputs.game_apk_name }}
-      game_cloned_name: ${{ steps.ver_check.outputs.game_cloned_name }}
-
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Get latest tag and compare with existing
-        id: ver_check
-        run: bash ver_check.sh
-
   build:
     runs-on: ubuntu-latest
-    needs: check
-    if: needs.check.outputs.continue == 'true'
-
-    env:
-      APK_VERSION: ${{ needs.check.outputs.apk_version }}
-      GAME_FILE_BASE: ${{ needs.check.outputs.game_file_base }}
-      GAME_APK_NAME: ${{ needs.check.outputs.game_apk_name }}
-      GAME_CLONED_NAME: ${{ needs.check.outputs.game_cloned_name }}
-      PLAY_EMAIL: ${{ secrets.PLAY_EMAIL }}
-      AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
-
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v5
+
+      - name: Get the latest version
+        run: |
+          TARGET_VER="$(python play_ver_check/app.py)"
+          BASE_NAME="Gaku_${TARGET_VER}"
+          echo "APK_VERSION=${TARGET_VER}" >> $GITHUB_ENV
+          echo "GAME_FILE_BASE=${BASE_NAME}" >> $GITHUB_ENV
+          echo "GAME_APK_NAME=${BASE_NAME}.apk" >> $GITHUB_ENV
+          echo "GAME_CLONED_NAME=${BASE_NAME}_cloned.apk" >> $GITHUB_ENV
 
       - name: Download and prepare modules
         run: bash download_modules.sh

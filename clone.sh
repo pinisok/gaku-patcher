@@ -1,10 +1,10 @@
 #!/bin/bash
 APK_EXTRACT_DIR=Gaku_decompile_xml
 OLD_PACKAGE_NAME="com.bandainamcoent.idolmaster_gakuen"
-NEW_PACKAGE_NAME="com.bandainamcoent.idolmaster_gaku_kr"
+NEW_PACKAGE_NAME="com.bandainamcoent.idolmaster_gaku_en"
 
 GAKUMAS_JP="学マス"
-GAKUMAS_EN="학마"
+GAKUMAS_EN="Gakumas"
 NAME_FILE="./$APK_EXTRACT_DIR/resources/package_1/res/values/strings.xml"
 
 java -jar APKEditor.jar d -t xml -dex -i "$GAME_APK_NAME" -o $APK_EXTRACT_DIR
