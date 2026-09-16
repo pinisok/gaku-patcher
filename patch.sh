@@ -30,8 +30,14 @@ LOCALIFY_CLONED_DIR=localify_cloned_module
 LOCALIFY_CLONED_APK=localify_cloned_module.apk
 
 java -jar APKEditor.jar d -i "$LOCALIFY_NAME" -o $LOCALIFY_CLONED_DIR
-grep -rIl "$OLD_PACKAGE" ./$LOCALIFY_CLONED_DIR | xargs sed -i "s/$OLD_PACKAGE/$NEW_PACKAGE/g"
-grep -rIl "$OLD_PACKAGE_SLASH" ./$LOCALIFY_CLONED_DIR | xargs sed -i "s|$OLD_PACKAGE_SLASH|$NEW_PACKAGE_SLASH|g"
+# The Localify module may not contain every form of the package name (e.g. the
+# slash form is absent in some versions), so a no-match is not an error here.
+replace_in_module() {
+    local pattern="$1" replacement="$2"
+    { grep -rIl "$pattern" ./$LOCALIFY_CLONED_DIR || true; } | xargs -r sed -i "s|$pattern|$replacement|g"
+}
+replace_in_module "$OLD_PACKAGE" "$NEW_PACKAGE"
+replace_in_module "$OLD_PACKAGE_SLASH" "$NEW_PACKAGE_SLASH"
 java -jar APKEditor.jar b -i $LOCALIFY_CLONED_DIR -o $LOCALIFY_CLONED_APK
 
 java -jar lspatch.jar "$GAME_CLONED_NAME" -m "$LOCALIFY_CLONED_APK" -o localify_cloned --force
