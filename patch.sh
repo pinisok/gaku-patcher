@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 GAME_EMBEDDED_BASE="$GAME_FILE_BASE"_embedded
 GAME_PATCHED_APK="$GAME_FILE_BASE"-430-lspatched.apk

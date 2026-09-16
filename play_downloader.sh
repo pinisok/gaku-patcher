@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # CONFIG
 OPTIONS=locale=jp,timezone=UTC+9,split_apk=1,include_additional_files=true

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 apk_version=$(python play_ver_check/app.py)
 

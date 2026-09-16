@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 APK_EXTRACT_DIR=Gaku_decompile_xml
 OLD_PACKAGE_NAME="com.bandainamcoent.idolmaster_gakuen"
 NEW_PACKAGE_NAME="com.bandainamcoent.idolmaster_gaku_en"
