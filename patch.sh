@@ -22,25 +22,8 @@ mv "$embed_apk" ./"$GAME_EMBEDDED_APK"
 
 if [ -f "$GAME_CLONED_NAME" ]
 then
-OLD_PACKAGE="com.bandainamcoent.idolmaster_gakuen"
-NEW_PACKAGE="com.bandainamcoent.idolmaster_gaku_en"
-OLD_PACKAGE_SLASH="com/bandainamcoent/idolmaster_gakuen"
-NEW_PACKAGE_SLASH="com/bandainamcoent/idolmaster_gaku_en"
-LOCALIFY_CLONED_DIR=localify_cloned_module
-LOCALIFY_CLONED_APK=localify_cloned_module.apk
-
-java -jar APKEditor.jar d -i "$LOCALIFY_NAME" -o $LOCALIFY_CLONED_DIR
-# The Localify module may not contain every form of the package name (e.g. the
-# slash form is absent in some versions), so a no-match is not an error here.
-replace_in_module() {
-    local pattern="$1" replacement="$2"
-    { grep -rIl "$pattern" ./$LOCALIFY_CLONED_DIR || true; } | xargs -r sed -i "s|$pattern|$replacement|g"
-}
-replace_in_module "$OLD_PACKAGE" "$NEW_PACKAGE"
-replace_in_module "$OLD_PACKAGE_SLASH" "$NEW_PACKAGE_SLASH"
-java -jar APKEditor.jar b -i $LOCALIFY_CLONED_DIR -o $LOCALIFY_CLONED_APK
-
-java -jar lspatch.jar "$GAME_CLONED_NAME" -m "$LOCALIFY_CLONED_APK" -o localify_cloned --force
+# The module supports both game packages without package-name rewriting.
+java -jar lspatch.jar "$GAME_CLONED_NAME" -m "$LOCALIFY_NAME" -o localify_cloned --force
 embed_apk_cloned=$(find ./localify_cloned/*.apk)
 mv "$embed_apk_cloned" ./"$GAME_EMBEDDED_CLONED"
 echo "EMBED_APK_CLONED=$GAME_EMBEDDED_CLONED" >> "$GITHUB_ENV"
